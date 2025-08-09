@@ -3,10 +3,18 @@
 import { useState } from 'react';
 
 // We'll define a type for the trade result later
+type Trade = {
+  traderId: number;
+  symbol: string;
+  price: number;
+  volume: number;
+  timestamp: string;
+}
+
 type SimulationResult = {
-  originalTrade: Record<string, any>;
-  manipulatedTrade: Record<string, any>;
-  appliedRules: any[];
+  originalTrade: Trade;
+  manipulatedTrade: Trade;
+  appliedRules: Record<string, unknown>[];
 };
 
 export default function SimulationPage() {
@@ -52,10 +60,14 @@ export default function SimulationPage() {
         throw new Error(`API Error: ${response.status} ${errorText}`);
       }
 
-      const data = await response.json();
+      const data: SimulationResult = await response.json();
       setResult(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('An unknown error occurred.');
+        }
     } finally {
       setIsLoading(false);
     }

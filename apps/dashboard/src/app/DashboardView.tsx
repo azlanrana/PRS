@@ -19,7 +19,17 @@ function formatCurrency(value: number) {
   }).format(value)
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+}
+
+
+const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-gray-700 text-white p-4 rounded-lg shadow-lg border border-gray-600">
@@ -37,7 +47,15 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null
 }
 
-export function DashboardView({ stats }: { stats: any }) {
+interface Stats {
+    totalTraders: number;
+    manipulatedTraders: number;
+    totalExecutions: number;
+    originalProfit: number;
+    manipulatedProfit: number;
+}
+
+export function DashboardView({ stats }: { stats: Stats }) {
   const chartData = [
     {
       name: '',

@@ -1,7 +1,7 @@
 
 'use client'
 import { useState } from 'react'
-import { Trader, RuleSet } from '@prisma/client'
+import { Trader, RuleSet } from '@risk-control/shared-types'
 import { assignRuleSet } from './actions'
 
 type TraderWithRuleSet = Trader & {

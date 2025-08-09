@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { addExecutionRule } from './actions';
+import { RuleType } from '@risk-control/shared-types';
 
 export function AddExecutionRuleModal({ ruleSetId, ruleTypes }: { ruleSetId: string, ruleTypes: string[] }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,11 +22,11 @@ export function AddExecutionRuleModal({ ruleSetId, ruleTypes }: { ruleSetId: str
       const parsedParams = JSON.parse(parameters);
       await addExecutionRule({
         ruleSetId,
-        type: type as any, // The type is a string, but the server action expects the enum
+        type: type as RuleType,
         parameters: parsedParams,
       });
       handleClose();
-    } catch (err) {
+    } catch {
       setError('Invalid JSON format for parameters.');
     }
   };

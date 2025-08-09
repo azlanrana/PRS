@@ -7,8 +7,13 @@ import { EditRuleSetModal } from './EditRuleSetModal'
 import { useTransition } from 'react'
 import { deleteRuleSet } from './actions'
 
+type ExecutionRule = {
+    id: string;
+    // Add other properties of ExecutionRule here
+};
+
 type RuleSetWithRules = RuleSet & {
-  rules: any[]
+  rules: ExecutionRule[]
 }
 
 export function RuleSetsView({

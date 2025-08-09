@@ -7,7 +7,7 @@ import { RuleType } from '@risk-control/shared-types'
 export async function addExecutionRule(formData: {
   ruleSetId: string
   type: RuleType
-  parameters: any
+  parameters: Record<string, unknown>
 }) {
   const supabase = await createAdminClient()
 

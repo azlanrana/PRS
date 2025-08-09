@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Trader, RuleSet } from '@prisma/client'
+import { Trader, RuleSet } from '@risk-control/shared-types'
 import Link from 'next/link'
 import { TraderActions } from './TraderActions'
 
@@ -80,7 +80,7 @@ export function TradersView({
                     {trader.platformId}
                   </td>
                   <td className="px-6 py-3 border-x dark:border-neutral-600">
-                    {trader.platform}
+                    {trader.platformId}
                   </td>
                   <td className="px-6 py-3 border-x dark:border-neutral-600">
                     {trader.ruleSet?.name || 'None'}

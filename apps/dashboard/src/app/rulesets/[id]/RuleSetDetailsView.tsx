@@ -2,8 +2,19 @@
 
 import Link from 'next/link'
 import { AddExecutionRuleModal } from './AddExecutionRuleModal'
+import { RuleSet } from '@risk-control/shared-types';
 
-export function RuleSetDetailsView({ ruleSet, ruleTypes }: { ruleSet: any, ruleTypes: string[] }) {
+interface ExecutionRule {
+    id: string;
+    type: string;
+    parameters: Record<string, unknown>;
+}
+
+interface RuleSetWithRules extends RuleSet {
+    rules: ExecutionRule[];
+}
+
+export function RuleSetDetailsView({ ruleSet, ruleTypes }: { ruleSet: RuleSetWithRules, ruleTypes: string[] }) {
   return (
     <div>
       <div className="mb-6">
@@ -51,7 +62,7 @@ export function RuleSetDetailsView({ ruleSet, ruleTypes }: { ruleSet: any, ruleT
               </tr>
             </thead>
             <tbody>
-              {ruleSet.rules.map((rule: any) => (
+              {ruleSet.rules.map((rule) => (
                 <tr key={rule.id} className="border-b dark:border-neutral-600">
                   <td className="px-6 py-3 border-x dark:border-neutral-600">
                     {rule.type}

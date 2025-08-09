@@ -34,4 +34,12 @@ export type RuleSet = {
     description: string | null;
     createdAt: Date;
     updatedAt: Date;
+};
+
+export type Trader = {
+    id: string;
+    platformId: string;
+    ruleSetId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
 }; 

@@ -24,7 +24,7 @@ export async function createAdminClient() {
   })
 
   // Test the client
-  const { data: testData, error: testError } = await client.from('Trader').select('count').single()
+  const { error: testError } = await client.from('Trader').select('count').single()
   console.log('Admin client test:', { success: !testError, error: testError })
 
   return client
