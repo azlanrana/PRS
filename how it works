@@ -1,0 +1,96 @@
+To be perfectly precise, we can break your "execution" step into two parts:
+1. Bridge: Intercepts the original trade from the platform.
+2. Manipulation Engine (Our API): The Bridge sends the trade to our API, which instantly changes the price, adds a delay, etc., based on the rules.
+3. Execution (Trading Platform): The Bridge sends the new, manipulated trade to the trading platform's servers to be executed on the (simulated) market.
+4. Supabase (Logging): After the trade is on its way, our API saves a log of what happened to the Supabase database for you to see on the dashboard.
+
+
+Of course. The JSON `parameters` for each rule set depend on the `RuleType` you select. The structure is designed to be flexible, but here are the recommended formats based on the schema defined in `database/schema.prisma`.
+
+I'll outline the common `RuleType`s and provide a clear JSON formula for each.
+
+### 1. `PRICE_SKEW`
+
+This rule offsets the execution price.
+
+*   `points`: The number of points (or pips) to skew the price.
+*   `direction`: Can be `"WORSE"` (against the trader) or `"FAVORABLE"` (for the trader).
+
+**Example:**
+```json
+{
+  "points": 5,
+  "direction": "WORSE"
+}
+```
+
+### 2. `SLIPPAGE`
+
+This rule applies artificial slippage to an order.
+
+*   `min_points`: The minimum slippage to apply.
+*   `max_points`: The maximum slippage to apply. The final slippage will be a random value in this range.
+
+**Example:**
+```json
+{
+  "min_points": 1,
+  "max_points": 5
+}
+```
+
+### 3. `DELAY`
+
+This rule delays the execution of an order.
+
+*   `milliseconds`: The time to delay the order in milliseconds.
+
+**Example:**
+```json
+{
+  "milliseconds": 100
+}
+```
+
+### 4. `SPREAD_MARKUP`
+
+This rule adds an extra amount to the spread.
+
+*   `points`: The number of points to add to the existing spread.
+
+**Example:**
+```json
+{
+  "points": 2
+}
+```
+
+### 5. `SYNTHETIC_COMM`
+
+This rule adds a flat commission fee to the trade.
+
+*   `amount`: The commission amount in the account's currency.
+*   `type`: Can be `"FIXED"` (per trade) or `"PER_LOT"` (per lot traded).
+
+**Example:**
+```json
+{
+  "amount": 5,
+  "type": "FIXED"
+}
+```
+
+### 6. `LIQUIDITY_THIN`
+
+This rule simulates reduced liquidity, potentially causing partial fills or slower execution.
+
+*   `fill_ratio`: The maximum percentage of the order to fill (e.g., `0.5` for 50%).
+*   `rejection_chance`: The probability (from `0.0` to `1.0`) that the order will be rejected entirely.
+
+**Example:**
+```json
+{
+  "fill_ratio": 0.5,
+  "rejection_chance": 0.1
+}
+```

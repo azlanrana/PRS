@@ -1,0 +1,17 @@
+{
+  "name": "@risk-control/core-engine",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@risk-control/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.0",
+    "@types/jest": "^30.0.0"
+  }
+} 

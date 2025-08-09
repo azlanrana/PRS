@@ -1,0 +1,19 @@
+{
+  "name": "@risk-control/bridge-tradelocker",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "db:seed": "../../node_modules/.bin/dotenv -e ../../.env -- ts-node ../../infra/scripts/seed.ts"
+  },
+  "dependencies": {
+    "@risk-control/core-engine": "workspace:*",
+    "dotenv": "^16.4.5",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.11",
+    "ts-node": "^10.9.2"
+  }
+} 

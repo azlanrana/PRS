@@ -1,0 +1,108 @@
+// Datasource and generator blocks tell Prisma how to connect to the DB
+// and what to generate. We'll use PostgreSQL and the Prisma Client for JS/TS.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../packages/shared-types/src/prisma-client"
+}
+
+// --- Enums ---
+
+// Defines the risk level or status of a trader.
+// CLEAN: Standard execution.
+// WATCHLIST: Under observation, may have light rules applied.
+// FLAGGED: High-risk, subject to significant execution manipulation.
+enum TraderStatus {
+  CLEAN
+  WATCHLIST
+  FLAGGED
+}
+
+// Defines the type of execution manipulation rule.
+// This allows us to have different logic for each rule type in the engine.
+enum RuleType {
+  PRICE_SKEW // Offset the price by a certain amount.
+  SLIPPAGE // Apply artificial slippage.
+  DELAY // Delay order execution.
+  SPREAD_MARKUP // Add a markup to the spread.
+  SYNTHETIC_COMM // Add a synthetic commission.
+  LIQUIDITY_THIN // Simulate reduced liquidity.
+}
+
+// --- Models ---
+
+// Represents a trader being monitored by the system.
+model Trader {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // External identifier from the trading platform (e.g., MT5 login ID).
+  platformId String       @unique
+  name       String? // Optional: a human-readable name for the trader.
+  status     TraderStatus @default(CLEAN)
+
+  // A trader can be assigned to one RuleSet.
+  ruleSetId String?
+  ruleSet   RuleSet? @relation(fields: [ruleSetId], references: [id])
+
+  // Log entries related to this trader.
+  logs ExecutionLog[]
+}
+
+// A collection of execution rules that can be applied to traders.
+model RuleSet {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String  @unique
+  description String?
+
+  // A RuleSet contains multiple individual rules.
+  rules   ExecutionRule[]
+  // A RuleSet can be assigned to many traders.
+  traders Trader[]
+}
+
+// Defines a single, specific execution manipulation rule.
+model ExecutionRule {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type RuleType // The type of manipulation.
+
+  // Rule parameters stored as a JSON string to allow for flexibility.
+  // e.g., for DELAY: { "milliseconds": 100 }
+  // e.g., for PRICE_SKEW: { "points": 5, "direction": "WORSE" }
+  parameters Json
+
+  // An ExecutionRule belongs to one RuleSet.
+  ruleSetId String
+  ruleSet   RuleSet @relation(fields: [ruleSetId], references: [id])
+}
+
+// Logs every execution manipulation performed by the system.
+// This is critical for auditing, monitoring, and analytics.
+model ExecutionLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  traderId String
+  trader   Trader @relation(fields: [traderId], references: [id])
+
+  ruleType RuleType
+
+  // Details of the original and manipulated trade.
+  originalTrade Json
+  modifiedTrade Json
+
+  // The specific parameters applied at the time of execution.
+  appliedParameters Json
+}
